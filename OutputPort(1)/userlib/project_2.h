@@ -59,6 +59,7 @@ typedef struct SYSYTEM_PI
     PID_t    OutputPort_Charger_Power_Control;
     PID_t    OutputPort_Resistor_Voltage_Control;
     PID_t    OutputPort_Charger_Voltage_Control;
+    PID_t    OutputPort_Charger_OutPower_Control;
 }System_PI;
 
 typedef struct SYSTEM_ADC
@@ -93,5 +94,7 @@ void Output_ChargerPower_LoopRun();
 void ADC_Conversion_Program();
 void System_Init();
 void Output_ChargerVoltage_LoopRun();
+void Output_ChargerOutPow_LoopRun();
+void System_Outputing_Program_Start();
 
 #endif // !__PROJECT_H__

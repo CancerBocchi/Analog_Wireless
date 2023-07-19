@@ -5,6 +5,7 @@
 
 void Output_Resistor_Buck_Switch(bool OnOff);
 void Output_Charger_Buck_Switch(bool OnOff);
+void Output_Bridge_Switch(bool OnOff);
 
 
 #endif
