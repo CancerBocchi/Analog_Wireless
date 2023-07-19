@@ -24,10 +24,19 @@ typedef enum FAULT_CODE
     OverVol_Fault = 0x01,
 }Fault_Code;
 
+typedef enum
+{
+    ResVolLoopRun = 0x00,
+    ChaPowLoopRun = 0x01,
+    ChaVolLoopRun = 0x02,
+    NotInCharging = 0x03,
+}Charging_State;
+
 typedef enum SYSTEM_STATE
 {
     System_Charging  = 0x00,
     System_Outputing = 0x01,
+    System_Stopping   = 0x02,
     System_Fault     = 0x03,
 }System_State;
 
@@ -75,6 +84,7 @@ typedef struct SYSTEM_DATA
 
 extern System_Data Data;
 extern Fault_Code Fault_Monitor;
+extern Charging_State Charging_Falg;
 
 void System_Fault_Program_Start();
 void System_Charging_Program_Start();

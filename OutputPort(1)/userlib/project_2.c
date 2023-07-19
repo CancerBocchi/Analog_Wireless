@@ -53,6 +53,8 @@ void System_Init()
     Data.System_Flag.OutputPort_Charger_Buck_State = OFF;
     Data.System_Flag.OutputPort_Resistor_Buck_State = OFF;
 
+    Charging_Falg = ResVolLoopRun;
+
     hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0.1f*hhrtim1.Instance->sTimerxRegs[0].PERxR;
     hhrtim1.Instance->sTimerxRegs[0].CMP2xR = 0.5f*hhrtim1.Instance->sTimerxRegs[0].PERxR;
     hhrtim1.Instance->sTimerxRegs[0].CMP4xR = 0.5f*hhrtim1.Instance->sTimerxRegs[0].CMP1xR;
