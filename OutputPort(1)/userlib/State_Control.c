@@ -74,15 +74,23 @@ void System_Charging_Program()
 
 void System_Stopping_Program()
 {
-    Output_Charger_Buck_Switch(OFF);
-    Output_Resistor_Buck_Switch(OFF);
+    // Output_Charger_Buck_Switch(OFF);
+    //Output_Resistor_Buck_Switch(OFF);
+    static int flag = 0;
+    flag ++;
+    if(flag == 4)
+    {
+        Output_ResistorVoltage_LoopRun();
+        flag = 0;
+    }
 }
 
 void System_Judging_Program()
 {
     static uint8_t switch_Flag[2];
 //充电充满时限流
-    if(Data.System_Flag.Current_State == System_Charging)
+    if(Data.System_Flag.Current_State == System_Charging &&
+       Charging_Falg == ChaVolLoopRun)
     {
         Data.System_Sample.OutputPort_Charger_Current_Value < 0.05f ?
         switch_Flag[0]++ : (switch_Flag[0] = 0);
@@ -102,7 +110,7 @@ void State_Outputing_Program()
 
 void State_Program()
 {
-    System_Judging_Program();
+    //System_Judging_Program();
     switch (Data.System_Flag.Current_State)
     {
     case System_Charging:
