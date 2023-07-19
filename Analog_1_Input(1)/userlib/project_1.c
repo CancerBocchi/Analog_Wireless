@@ -3,6 +3,7 @@
 
 Input_Side Data;
 System_Falg Flag_Data;
+
 /**
  * hrtimA 通道a作用于输入侧电流 
  *        通道b作用于电阻电压
@@ -15,7 +16,6 @@ System_Falg Flag_Data;
 void Input_Init()
 {   
     HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_MASTER);
-
     HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,HRTIM_TIMERID_TIMER_A);
     HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_TIMER_B);
     HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_TIMER_C);
@@ -28,11 +28,11 @@ void Input_Init()
     Data.Current_Controller.Output_Max = hhrtim1.Instance->sTimerxRegs[0].PERxR * 0.75f;
     Data.Current_Controller.Output_Min = hhrtim1.Instance->sTimerxRegs[0].PERxR * 0.1f;
 
-    PID_Init(&Data.Voltage_Controller,0.0f,-5.0f,0.0f);
-    Data.Voltage_Controller.Ref = 1.8f;//初始期望
-    Data.Voltage_Controller.Value_I_Max = 50000.0f;
+    PID_Init(&Data.Voltage_Controller,0.0f,600.0f,0.0f);
+    Data.Voltage_Controller.Ref = 7.0f;//初始期望
+    Data.Voltage_Controller.Value_I_Max = 500.0f;
     Data.Voltage_Controller.Output_Max = hhrtim1.Instance->sTimerxRegs[0].PERxR * 0.75f;
-    Data.Voltage_Controller.Output_Min = hhrtim1.Instance->sTimerxRegs[0].PERxR * 0.2f;
+    Data.Voltage_Controller.Output_Min = hhrtim1.Instance->sTimerxRegs[0].PERxR * 0.1f;
     //配置初始占空比
     hhrtim1.Instance->sTimerxRegs[0].CMP1xR = (int)((hhrtim1.Instance->sTimerxRegs[0].PERxR + 1)*0.2f);
     hhrtim1.Instance->sTimerxRegs[0].CMP4xR = 0.5f * hhrtim1.Instance->sTimerxRegs[0].CMP1xR;
@@ -40,12 +40,13 @@ void Input_Init()
     Flag_Data.Input_Current_Buck_Switch = false;
     Flag_Data.Input_Resistor_Buck_Switch = false;
     Flag_Data.Current_State = System_Charging;
+    Flag_Data.Current_State = System_Outputing;
 
     HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
     ADC_Start();
 }
 
-void Input_Current_Buck_Switch(bool OnOff)
+void Input_Buck_Switch(bool OnOff)
 {
     if(OnOff == ON)
     {
@@ -67,27 +68,6 @@ void Input_Current_Buck_Switch(bool OnOff)
     }
 }
 
-void Input_Resistor_Buck_Switch(bool OnOff)
-{
-    if(OnOff == ON)
-    {
-        if(!Flag_Data.Input_Resistor_Buck_Switch)
-        {
-            Flag_Data.Input_Resistor_Buck_Switch = ON;
-            HAL_HRTIM_WaveformOutputStart(&hhrtim1,HRTIM_OUTPUT_TA2);
-        }
-        return;
-    }
-    else if(OnOff == OFF)
-    {
-        if(Flag_Data.Input_Resistor_Buck_Switch)
-        {
-            Flag_Data.Input_Resistor_Buck_Switch = OFF;
-            HAL_HRTIM_WaveformOutputStop(&hhrtim1,HRTIM_OUTPUT_TA2);
-        }
-        return;
-    }
-}
 
 void Input_Bridge_Switch(bool OnOff)
 {
@@ -128,28 +108,25 @@ void ADC_Conversion()
         Data.bus_current = (VoltageGet - Sample_Voltage_Offset)/(50.0f*(float)Data.R)*Ki + 0.0008f;//电流单位为A 
         //Block_UART_printf(&huart4,"%f,%f\n",VoltageGet,Data.bus_current);
 
-        Data.resistor_voltage = Data.raw_ADC_Value[1]*(3000.0f/4096.0f)*Kv;
-
-
+        Data.resistor_voltage = Data.raw_ADC_Value[1]*(3.0f/4096.0f)*8.97435f;
+        // Block_UART_printf(&huart4,"%.3f\n",Data.resistor_voltage);
 }
 
 void Input_Outputing_Program()
 {
     Input_Bridge_Switch(OFF);
-    Input_Current_Buck_Switch(OFF);
-    Input_Resistor_Buck_Switch(ON);
+    Input_Buck_Switch(ON);
     //PI控制
-    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = PID_Controller(&Data.Current_Controller,Data.bus_current);
-    hhrtim1.Instance->sTimerxRegs[0].CMP4xR = 0.5f*hhrtim1.Instance->sTimerxRegs[0].CMP2xR;
-
+    hhrtim1.Instance->sTimerxRegs[0].CMP1xR = PID_Controller(&Data.Voltage_Controller,Data.resistor_voltage
+    );
+    hhrtim1.Instance->sTimerxRegs[0].CMP4xR = 0.1f*hhrtim1.Instance->sTimerxRegs[0].CMP1xR;
 }
 
 void Input_Charging_Program()
 {
     // HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
     Input_Bridge_Switch(ON);
-    Input_Current_Buck_Switch(ON);
-    Input_Resistor_Buck_Switch(OFF);
+    Input_Buck_Switch(ON);
     //PI控制
     hhrtim1.Instance->sTimerxRegs[0].CMP1xR = PID_Controller(&Data.Current_Controller,Data.bus_current);
     hhrtim1.Instance->sTimerxRegs[0].CMP4xR = 0.5f*hhrtim1.Instance->sTimerxRegs[0].CMP1xR;

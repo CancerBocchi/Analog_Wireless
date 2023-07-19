@@ -187,14 +187,14 @@ void MX_HRTIM1_Init(void)
     Error_Handler();
   }
   pOutputCfg.Polarity = HRTIM_OUTPUTPOLARITY_LOW;
-  pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERPER;
-  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP1;
+  pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERCMP1;
+  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERPER;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_B, HRTIM_OUTPUT_TB2, &pOutputCfg) != HAL_OK)
   {
     Error_Handler();
   }
-  pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERCMP1;
-  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERPER;
+  pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERPER;
+  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP1;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_C, HRTIM_OUTPUT_TC2, &pOutputCfg) != HAL_OK)
   {
     Error_Handler();

@@ -44,7 +44,9 @@ void Input_Init();
 void ADC_Start();
 void ADC_Stop();
 void ADC_Conversion();
-void Input_Outputing_Program();
+void Input_Buck_Switch(bool OnOff);
+void Input_Bridge_Switch(bool OnOff);
 void Input_Charging_Program();
+void Input_Outputing_Program();
 
 #endif // !__PROJECT_H__
