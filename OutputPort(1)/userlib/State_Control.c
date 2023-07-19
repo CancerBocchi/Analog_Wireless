@@ -21,6 +21,7 @@ void System_Charging_Program()
         flag++;
         if(flag == 4)
         {
+
             Data.System_Sample.OutputPort_Charger_Current_Value = sum_c/4.0f;
             Data.System_Sample.OutputPort_Charger_Voltage_Value = sum_v/4.0f;
             Data.System_Sample.OutputPort_Resistor_Voltage_Value = sum_rv/4.0f;
@@ -28,7 +29,7 @@ void System_Charging_Program()
             sum_v = 0.0f;
             sum_rv = 0.0f;
             
-            if(switch_flag[0] < 50)
+            if(switch_flag[0] < 1000)
             {
                 if((Data.System_Sample.OutputPort_Resistor_Voltage_Value < 12.0f+0.05f)&&
                    (Data.System_Sample.OutputPort_Resistor_Voltage_Value > 12.0f-0.05f))
@@ -37,23 +38,20 @@ void System_Charging_Program()
                     switch_flag[0] = 0;
             }
 
-            if(switch_flag[0] >= 50)
+            if(switch_flag[0] >= 1000)
             {
                 Charging_Falg = ChaPowLoopRun;
                 if(switch_flag[1] <10)
                 {
-                    if(Data.System_Sample.OutputPort_Charger_Voltage_Value > 8.0f)
+                    if(Data.System_Sample.OutputPort_Charger_Voltage_Value > 8.1f)
                         switch_flag[1]++;
-                    else if(Data.System_Sample.OutputPort_Charger_Voltage_Value < 8.0f)
+                    else if(Data.System_Sample.OutputPort_Charger_Voltage_Value < 8.1f)
                     {
-                        if(switch_flag[1])
-                            switch_flag[1] --;
-                        else
-                            switch_flag[1] = 0;
+                        switch_flag[1] = 0;
                     }
                 }
                 else if (switch_flag[1] >= 10)
-                Charging_Falg = ChaVolLoopRun;
+                    Charging_Falg = ChaVolLoopRun;
             }
             
             Output_ResistorVoltage_LoopRun();
@@ -111,19 +109,32 @@ void System_Outputing_Program()
 
 void State_Program()
 {
-    if(Cancer_JudgeKey_LTH(GPIOC,GPIO_PIN_1))
-    {
-        if(Data.System_Flag.Current_State != System_Outputing)
-        {
-            Data.System_Flag.Current_State = System_Outputing;
-            Charging_Falg = NotInCharging;
-        }
-        else if(Data.System_Flag.Current_State != System_Charging)
-        {
-            Data.System_Flag.Current_State = System_Charging;
-            Charging_Falg = ResVolLoopRun;
-        }
-    }
+
+    // static uint64_t counter = 0;
+    // static uint8_t Fre_Flag = 0;
+    // static uint64_t tick = 0;
+    // Fre_Flag++;
+    // if(Fre_Flag >=80)
+    // {
+    //     counter++;
+    //     Fre_Flag = 0;
+    // }
+    
+    // if((counter - tick) > 200 && HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_1))
+    // {   
+    //     TogglePin_C13;
+    //     if(Data.System_Flag.Current_State != System_Outputing)
+    //     {
+    //         Data.System_Flag.Current_State = System_Outputing;
+    //         Charging_Falg = NotInCharging;
+    //     }
+    //     else if(Data.System_Flag.Current_State != System_Charging)
+    //     {
+    //         Data.System_Flag.Current_State = System_Charging;
+    //         Charging_Falg = ResVolLoopRun;
+    //     }
+    //     tick = counter;
+    // }
     //System_Judging_Program();
     switch (Data.System_Flag.Current_State)
     {
@@ -143,4 +154,5 @@ void State_Program()
         System_Fault_Program_Start();
         break;
     }
+
 }

@@ -14,9 +14,12 @@ System_Falg Flag_Data;
 
 void Input_Init()
 {   
-    
+    HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_MASTER);
+
     HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,HRTIM_TIMERID_TIMER_A);
     HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_TIMER_B);
+    HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_TIMER_C);
+ 
     //定义PID结构体0
     PID_Init(&Data.Current_Controller,-10.0f,-320.0f,0.0f);
     Data.R = 15;
@@ -93,7 +96,7 @@ void Input_Bridge_Switch(bool OnOff)
         if(!Flag_Data.Input_Bridge_Switch)
         {
             Flag_Data.Input_Bridge_Switch = ON;
-            HAL_HRTIM_WaveformOutputStart(&hhrtim1,HRTIM_OUTPUT_TB1|HRTIM_OUTPUT_TB2);
+            HAL_HRTIM_WaveformOutputStart(&hhrtim1,HRTIM_OUTPUT_TB1|HRTIM_OUTPUT_TB2|HRTIM_OUTPUT_TC1|HRTIM_OUTPUT_TC2);
         }
         return;
     }
@@ -102,7 +105,7 @@ void Input_Bridge_Switch(bool OnOff)
         if(Flag_Data.Input_Bridge_Switch)
         {
             Flag_Data.Input_Bridge_Switch = OFF;
-            HAL_HRTIM_WaveformOutputStop(&hhrtim1,HRTIM_OUTPUT_TB1|HRTIM_OUTPUT_TB2);
+            HAL_HRTIM_WaveformOutputStop(&hhrtim1,HRTIM_OUTPUT_TB1|HRTIM_OUTPUT_TC2|HRTIM_OUTPUT_TB2|HRTIM_OUTPUT_TC1);
         }
         return;
     }

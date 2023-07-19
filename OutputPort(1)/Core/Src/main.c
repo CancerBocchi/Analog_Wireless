@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "hrtim.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -94,6 +95,7 @@ int main(void)
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_HRTIM1_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   //__HAL_SPI_ENABLE(&hspi1);
   Task_Init();

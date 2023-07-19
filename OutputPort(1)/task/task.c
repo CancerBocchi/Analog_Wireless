@@ -6,26 +6,13 @@
 void Task_Init()
 {
     System_Init();
+    //HAL_TIM_Base_Start(&htim1);
 }
 
 /*task do*/
 void Task_Do()
 {
-    if(Cancer_JudgeKey_LTH(GPIOC,GPIO_PIN_2))
-    {
-        Data.System_Flag.Current_State = System_Charging;
-        Charging_Falg = ResVolLoopRun;
-    }
-    if(Cancer_JudgeKey_LTH(GPIOC,GPIO_PIN_3))
-    {
-        Data.System_Flag.Current_State = System_Outputing;
-        Charging_Falg = NotInCharging;
-    }
-    if(Cancer_JudgeKey_LTH(GPIOC,GPIO_PIN_1))
-    {
-        Data.System_Flag.Current_State = System_Stopping;
-        Charging_Falg = NotInCharging;
-    }
+
 }
 
 /*IT Function*/

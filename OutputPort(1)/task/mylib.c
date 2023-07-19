@@ -17,16 +17,17 @@ _Bool Cancer_JudgeKey_LTH(GPIO_TypeDef *Port,uint16_t Pin)
 	static uint8_t flag = 1;
 	if(flag)
 	{
-		tick = HAL_GetTick();
+		tick = __HAL_TIM_GET_COUNTER(&TIMER);
 		flag = 0;
 	}
-	if(HAL_GPIO_ReadPin(Port,Pin))
+	int a = HAL_GPIO_ReadPin(Port,Pin);
+	if(a)
 	{
-		if(HAL_GetTick() - tick > 200)
+		if(__HAL_TIM_GET_COUNTER(&TIMER) - tick > 1000)
 		{
 			return true;
 		}
-		tick = HAL_GetTick();
+		tick = __HAL_TIM_GET_COUNTER(&TIMER);
 	}
 	return false;
 }

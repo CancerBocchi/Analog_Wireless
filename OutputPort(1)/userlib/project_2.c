@@ -25,7 +25,7 @@ void System_Init()
     Data.System_Control.OutputPort_Charger_Power_Control.Output_Max  = 6000.0f;
     Data.System_Control.OutputPort_Charger_Power_Control.Output_Min  = -6000.0f;
     Data.System_Control.OutputPort_Charger_Power_Control.Value_I_Max = 50.0f;
-    Data.System_Control.OutputPort_Charger_Power_Control.Ref         = 3.0f;
+    Data.System_Control.OutputPort_Charger_Power_Control.Ref         = 4.0f;
 
     PID_Init(&Data.System_Control.OutputPort_Resistor_Voltage_Control,700.0f,350.0f,0.0f);
     Data.System_Control.OutputPort_Resistor_Voltage_Control.Output_Max  = 54000.0f;
@@ -40,10 +40,10 @@ void System_Init()
     Data.System_Control.OutputPort_Charger_Voltage_Control.Ref     = 8.1f;
 
     PID_Init(&Data.System_Control.OutputPort_Charger_OutPower_Control,0.0f,0.0f,0.0f);
-    Data.System_Control.OutputPort_Charger_Voltage_Control.Output_Max  = 6000.0f;
-    Data.System_Control.OutputPort_Charger_Voltage_Control.Output_Min  = -6000.0f;
-    Data.System_Control.OutputPort_Charger_Voltage_Control.Value_I_Max = 500.0f;
-    Data.System_Control.OutputPort_Charger_Voltage_Control.Ref     = -2.9f;
+    Data.System_Control.OutputPort_Charger_OutPower_Control.Output_Max  = 6000.0f;
+    Data.System_Control.OutputPort_Charger_OutPower_Control.Output_Min  = -6000.0f;
+    Data.System_Control.OutputPort_Charger_OutPower_Control.Value_I_Max = 500.0f;
+    Data.System_Control.OutputPort_Charger_OutPower_Control.Ref     = -2.9f;
 
     //ADC Data init
     Data.System_Sample.OutputPort_Charger_Current_Value = 0.0f;
@@ -79,11 +79,11 @@ void ADC_Conversion_Program()
     // static int flag = 0;
     // if(flag < 100)
     // {
-          Block_UART_printf(&huart1,"%.3f,%.3f,%.3f,%.3f,%d\n",Data.System_Sample.OutputPort_Charging_Power
-                                                      ,Data.System_Sample.OutputPort_Charger_Voltage_Value
-                                                      ,Data.System_Sample.OutputPort_Charger_Current_Value,
-                                                      Data.System_Sample.OutputPort_Resistor_Voltage_Value,
-                                                      hhrtim1.Instance->sTimerxRegs[0].CMP1xR);
+        //   Block_UART_printf(&huart1,"%.3f,%.3f,%.3f,%.3f,%d\n",Data.System_Sample.OutputPort_Charging_Power
+        //                                               ,Data.System_Sample.OutputPort_Charger_Voltage_Value
+        //                                               ,Data.System_Sample.OutputPort_Charger_Current_Value,
+        //                                               Data.System_Sample.OutputPort_Resistor_Voltage_Value,
+        //                                               hhrtim1.Instance->sTimerxRegs[0].CMP1xR);
     //     flag ++;
     // }
     
@@ -158,13 +158,13 @@ void Output_ChargerOutPow_LoopRun()
     ? (hhrtim1.Instance->sTimerxRegs[0].PERxR*0.80f) : (hhrtim1.Instance->sTimerxRegs[0].CMP1xR + PID_Value);
     
     //软起动
-    if(Data.System_Control.OutputPort_Charger_Power_Control.Ref > -3.8f)
+    if(Data.System_Control.OutputPort_Charger_OutPower_Control.Ref > -3.8f)
     {
-        int ref = Data.System_Control.OutputPort_Charger_Power_Control.Ref;
+        int ref = Data.System_Control.OutputPort_Charger_OutPower_Control.Ref;
         if(Data.System_Sample.OutputPort_Charging_Power < ref + 0.05f &&
              Data.System_Sample.OutputPort_Charging_Power > ref - 0.05f)
         {
-            Data.System_Control.OutputPort_Charger_Power_Control.Ref -= 0.5f;
+            Data.System_Control.OutputPort_Charger_OutPower_Control.Ref -= 0.5f;
         }
     }
 }
