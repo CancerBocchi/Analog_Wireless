@@ -63,7 +63,6 @@ void System_Charging_Program()
             else if(Charging_Falg == ChaVolLoopRun)
                 Output_ChargerVoltage_LoopRun();
 
-
             hhrtim1.Instance->sTimerxRegs[0].CMP4xR = hhrtim1.Instance->sTimerxRegs[0].CMP1xR > 
                                                       hhrtim1.Instance->sTimerxRegs[0].CMP2xR ?
                                                     0.5f * hhrtim1.Instance->sTimerxRegs[0].CMP2xR:
@@ -108,7 +107,6 @@ void System_Outputing_Program()
     {
         Output_ChargerOutPow_LoopRun();
     }
-    
 }
 
 void State_Program()
