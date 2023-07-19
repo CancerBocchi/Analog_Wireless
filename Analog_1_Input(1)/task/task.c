@@ -11,7 +11,10 @@ void Task_Init()
 /*task do*/
 void Task_Do()
 {
-    
+    if(Cancer_JudgeKey_LTH(GPIOC,GPIO_PIN_1))
+    {
+        Flag_Data.Current_State = System_Outputing;
+    }
 }
 
 /*IT Function*/
@@ -45,13 +48,6 @@ if(LoopFre_Flag >= 4)
     sum_Vout = 0.0f;
     LoopFre_Flag = 0;
 
-    // fabsf(Data.bus_current)<0.001f && fabsf(Data.resistor_voltage)>2.0f
-    // ?  Judgee_Flag++ : Judgee_Flag = 0;
-    // if(Judgee_Flag >= 10)
-    // {
-    //     Judgee_Flag = 10;
-    //     Flag_Data = System_Outputing;
-    // }
     switch (Flag_Data.Current_State)
     {
     case System_Charging:
