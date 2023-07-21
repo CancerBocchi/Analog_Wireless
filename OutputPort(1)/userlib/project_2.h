@@ -15,8 +15,10 @@
 #define K_ADC_0 1.056f
 #define Kcv (3.0f/4096.0f)*4.7522f
 #define Krv (3.0f/4096.0f)*4.7378f
-#define Kcc (3.0f/4096.0f)*1.9789f
-#define CC_Offset -1.232f
+#define Kcc (3.0f/4096.0f)*2.0059f
+#define Kcc_N (3.0f/4096.0f)*2.0068f
+#define CC_Offset_N -2.4985f
+#define CC_Offset - 2.4958f
 
 typedef enum FAULT_CODE
 {
@@ -67,9 +69,11 @@ typedef struct SYSTEM_ADC
     uint8_t  Sampling_Resistor;
     uint16_t Raw_ADC_Value[3];
     float    OutputPort_Charger_Current_Value;
+    float    OutputPort_Charger_Current_Value_N;
     float    OutputPort_Charger_Voltage_Value;
     float    OutputPort_Resistor_Voltage_Value;
     float    OutputPort_Charging_Power;
+    float    OutputPort_Outputing_Power;
 }System_ADC;
 
 typedef struct SYSTEM_DATA

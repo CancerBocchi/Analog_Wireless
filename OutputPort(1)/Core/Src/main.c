@@ -99,9 +99,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //__HAL_SPI_ENABLE(&hspi1);
   Task_Init();
-
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -112,8 +110,6 @@ int main(void)
     
     //keyboard_execute();
     Task_Do();
-
-    
   }
   /* USER CODE END 3 */
 }

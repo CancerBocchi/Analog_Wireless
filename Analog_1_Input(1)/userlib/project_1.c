@@ -21,7 +21,7 @@ void Input_Init()
     HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_TIMER_C);
  
     //定义PID结构体0
-    PID_Init(&Data.Current_Controller,-10.0f,-320.0f,0.0f);
+    PID_Init(&Data.Current_Controller,-150.0f,-150.0f,0.0f);
     Data.R = 15;
     Data.Current_Controller.Ref = 2.0f;//初始期望
     Data.Current_Controller.Value_I_Max = 5000.0f;
@@ -40,7 +40,6 @@ void Input_Init()
     Flag_Data.Input_Current_Buck_Switch = false;
     Flag_Data.Input_Resistor_Buck_Switch = false;
     Flag_Data.Current_State = System_Charging;
-    Flag_Data.Current_State = System_Outputing;
 
     HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
     ADC_Start();

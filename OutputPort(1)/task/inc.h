@@ -10,7 +10,7 @@
 
 /*基本模块*/
 #include "mylib.h"
-
+#include "SEGGER_RTT.h"
 
 /*标准库模块*/
 #include "math.h"

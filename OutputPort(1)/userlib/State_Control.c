@@ -25,10 +25,13 @@ void System_Charging_Program()
             Data.System_Sample.OutputPort_Charger_Current_Value = sum_c/4.0f;
             Data.System_Sample.OutputPort_Charger_Voltage_Value = sum_v/4.0f;
             Data.System_Sample.OutputPort_Resistor_Voltage_Value = sum_rv/4.0f;
+            Data.System_Sample.OutputPort_Charging_Power = Data.System_Sample.OutputPort_Charger_Current_Value*
+                                                           Data.System_Sample.OutputPort_Charger_Voltage_Value;
             sum_c = 0.0f;
             sum_v = 0.0f;
             sum_rv = 0.0f;
             
+
             if(switch_flag[0] < 1000)
             {
                 if((Data.System_Sample.OutputPort_Resistor_Voltage_Value < 12.0f+0.05f)&&
@@ -99,47 +102,62 @@ void System_Outputing_Program()
     Fre_FLag++;
     //固定原12V占空比
     System_Outputing_Program_Start();
-    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = 0.1 * hhrtim1.Instance->sTimerxRegs[0].PERxR;
+    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = 0.1f * hhrtim1.Instance->sTimerxRegs[0].PERxR;
     //电容稳定功率放电
+    static float sum_i = 0.0f;
+    static float sum_v = 0.0f;
+    sum_i += Data.System_Sample.OutputPort_Charger_Current_Value_N;
+    sum_v += Data.System_Sample.OutputPort_Charger_Voltage_Value;
     if(Fre_FLag >= 4)
     {
+        Data.System_Sample.OutputPort_Charger_Current_Value_N = sum_i/4.0f;
+        Data.System_Sample.OutputPort_Charger_Voltage_Value   = sum_v/4.0f;
+        Data.System_Sample.OutputPort_Outputing_Power = Data.System_Sample.OutputPort_Charger_Current_Value_N *
+                                                        Data.System_Sample.OutputPort_Charger_Voltage_Value;
+
+        sum_i = 0.0f;
+        sum_v = 0.0f;
+
+
+
         Output_ChargerOutPow_LoopRun();
+        Fre_FLag = 0;
     }
 }
 
 void State_Program()
 {
-
-    // static uint64_t counter = 0;
-    // static uint8_t Fre_Flag = 0;
-    // static uint64_t tick = 0;
-    // Fre_Flag++;
-    // if(Fre_Flag >=80)
-    // {
-    //     counter++;
-    //     Fre_Flag = 0;
-    // }
+    static uint64_t counter = 0;
+    static uint8_t Fre_Flag = 0;
+    static uint64_t tick = 0;
+    Fre_Flag++;
+    if(Fre_Flag >=80)
+    {
+        counter++;
+        Fre_Flag = 0;
+    }
     
-    // if((counter - tick) > 200 && HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_1))
-    // {   
-    //     TogglePin_C13;
-    //     if(Data.System_Flag.Current_State != System_Outputing)
-    //     {
-    //         Data.System_Flag.Current_State = System_Outputing;
-    //         Charging_Falg = NotInCharging;
-    //     }
-    //     else if(Data.System_Flag.Current_State != System_Charging)
-    //     {
-    //         Data.System_Flag.Current_State = System_Charging;
-    //         Charging_Falg = ResVolLoopRun;
-    //     }
-    //     tick = counter;
-    // }
+    if((counter - tick) > 200 && HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_1))
+    {   
+        
+        if(Data.System_Flag.Current_State != System_Outputing)
+        {
+            Data.System_Flag.Current_State = System_Outputing;
+            Charging_Falg = NotInCharging;
+        }
+        else if(Data.System_Flag.Current_State != System_Charging)
+        {
+            Data.System_Flag.Current_State = System_Charging;
+            Charging_Falg = ResVolLoopRun;
+        }
+        tick = counter;
+    }
     //System_Judging_Program();
     switch (Data.System_Flag.Current_State)
     {
     case System_Charging:
         System_Charging_Program();
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
         break;
 
     case System_Stopping:
@@ -148,6 +166,7 @@ void State_Program()
 
     case System_Outputing:
         System_Outputing_Program();
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,0);
         break;
 
     case System_Fault:
