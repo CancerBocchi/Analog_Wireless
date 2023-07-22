@@ -62,11 +62,11 @@ void HAL_HRTIM_RegistersUpdateCallback(HRTIM_HandleTypeDef * hhrtim,uint32_t Tim
         {
         case System_Charging:
             Input_Charging_Program();
-            
+            HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
             break;
         case System_Outputing:
             Input_Outputing_Program();
-            HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
+            HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,0);
             break;
         default:
             break;

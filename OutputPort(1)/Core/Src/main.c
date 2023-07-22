@@ -100,6 +100,7 @@ int main(void)
   //__HAL_SPI_ENABLE(&hspi1);
   Task_Init();
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

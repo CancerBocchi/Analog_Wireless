@@ -19,7 +19,7 @@ void System_Charging_Program()
         sum_v += Data.System_Sample.OutputPort_Charger_Voltage_Value;
         sum_rv += Data.System_Sample.OutputPort_Resistor_Voltage_Value;
         flag++;
-        if(flag == 4)
+        if(flag == 3)
         {
 
             Data.System_Sample.OutputPort_Charger_Current_Value = sum_c/4.0f;
@@ -30,7 +30,16 @@ void System_Charging_Program()
             sum_c = 0.0f;
             sum_v = 0.0f;
             sum_rv = 0.0f;
-            
+
+            SEGGER_RTT_printf(0,"%d,%d,%d,%d,",(int)(Data.System_Sample.OutputPort_Charging_Power * 1000.0f),
+                                    (int)(Data.System_Sample.OutputPort_Charger_Current_Value * 1000.0f),
+                                    (int)(Data.System_Sample.OutputPort_Charger_Voltage_Value * 1000.0f),
+                                    (int)(Data.System_Sample.OutputPort_Resistor_Voltage_Value * 1000.0f));
+
+            SEGGER_RTT_printf(0,"%d,%d,%d,%d\n",(int)(Data.System_Sample.OutputPort_Charging_Power * 1000.0f),
+                                    (int)(Data.System_Sample.Raw_ADC_Value[1]*3.0/4096 * 1000.0f),
+                                    (int)(Data.System_Sample.Raw_ADC_Value[2]*3.0/4096 * 1000.0f),
+                                    (int)(Data.System_Sample.Raw_ADC_Value[0]*3.0/4096 * 1000.0f));           
 
             if(switch_flag[0] < 1000)
             {
@@ -43,9 +52,8 @@ void System_Charging_Program()
 
             if(switch_flag[0] >= 1000)
             {
-                Charging_Falg = ChaPowLoopRun;
-                if(switch_flag[1] <10)
-                {
+                if(switch_flag[1] <50)
+                {   Charging_Falg = ChaPowLoopRun;
                     if(Data.System_Sample.OutputPort_Charger_Voltage_Value > 8.1f)
                         switch_flag[1]++;
                     else if(Data.System_Sample.OutputPort_Charger_Voltage_Value < 8.1f)
@@ -53,7 +61,7 @@ void System_Charging_Program()
                         switch_flag[1] = 0;
                     }
                 }
-                else if (switch_flag[1] >= 10)
+                else if (switch_flag[1] >= 50)
                     Charging_Falg = ChaVolLoopRun;
             }
             
@@ -69,6 +77,7 @@ void System_Charging_Program()
                                                     0.5f * hhrtim1.Instance->sTimerxRegs[0].CMP2xR:
                                                     0.5f * hhrtim1.Instance->sTimerxRegs[0].CMP1xR;
             flag = 0;
+
         }
 }
 
@@ -102,7 +111,7 @@ void System_Outputing_Program()
     Fre_FLag++;
     //固定原12V占空比
     System_Outputing_Program_Start();
-    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = 0.1f * hhrtim1.Instance->sTimerxRegs[0].PERxR;
+    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = 0.9f * hhrtim1.Instance->sTimerxRegs[0].PERxR;
     //电容稳定功率放电
     static float sum_i = 0.0f;
     static float sum_v = 0.0f;
@@ -117,8 +126,6 @@ void System_Outputing_Program()
 
         sum_i = 0.0f;
         sum_v = 0.0f;
-
-
 
         Output_ChargerOutPow_LoopRun();
         Fre_FLag = 0;

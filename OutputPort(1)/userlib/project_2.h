@@ -17,8 +17,8 @@
 #define Krv (3.0f/4096.0f)*4.7378f
 #define Kcc (3.0f/4096.0f)*2.0059f
 #define Kcc_N (3.0f/4096.0f)*2.0068f
-#define CC_Offset_N -2.4985f
-#define CC_Offset - 2.4958f
+#define CC_Offset_N -2.5185f
+#define CC_Offset - 2.5158f
 
 typedef enum FAULT_CODE
 {
