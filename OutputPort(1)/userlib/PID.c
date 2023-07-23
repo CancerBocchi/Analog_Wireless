@@ -1,6 +1,6 @@
 #include "PID.h"
 
-void PID_Init(PID_t* plant,float Kp,float Ki,float Kd)
+inline void Pos_PID_Init(Pos_PID_t* plant,float Kp,float Ki,float Kd)
 {
 	plant->Error = 0;
 	plant->Value_I = 0;
@@ -11,18 +11,14 @@ void PID_Init(PID_t* plant,float Kp,float Ki,float Kd)
 	plant->Kd = Kd;
 }
 
-float PI_Controller(PID_t* plant,float ValueCurrent)
+inline void Step_PID_Init(Step_PID_t* plant,float Kp,float Ki,float Kd)
 {
-	plant->Error = plant->Ref - ValueCurrent;
-	plant->Value_I += plant->Error;
-	plant->Output = plant->Kp * plant->Error + plant->Ki * plant->Value_I;
-	
-	if(plant->Output > plant->Output_Max)
-		return plant->Output_Max;
-	return plant->Output;
+	plant->Kd = Kd;
+	plant->Ki = Ki;
+	plant->Kp = Kp;
 }
 
-float PID_Controller(PID_t* plant ,float ValueCurrent)
+inline float Pos_PID_Controller(Pos_PID_t* plant ,float ValueCurrent)
 {
 	plant->Error = plant->Ref - ValueCurrent;
 	plant->Value_I += plant->Error;
@@ -47,16 +43,19 @@ float PID_Controller(PID_t* plant ,float ValueCurrent)
 	return plant->Output;
 }
 
+inline float Step_PID_Controller(Step_PID_t* plant,float ValueCurrent)
+{
+	plant->error_current = plant->Ref - ValueCurrent;
 
+	plant->Output = plant->Kp*plant->error_current - plant->Ki*plant->error_past1 + plant->Kp*plant->error_past2;
 
-
-
-
-
-
-
-
-
-
-
-
+	plant->error_past1 = plant->error_current;
+	plant->error_past2 = plant->error_past1;
+	
+	if(plant->Output >= plant->Output_Max)
+		return plant->Output_Max;
+	if(plant->Output >= plant->Output_Min)
+		return plant->Output_Min;
+	
+	return plant->Output;
+}

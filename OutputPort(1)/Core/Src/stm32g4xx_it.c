@@ -203,6 +203,7 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles DMA1 channel1 global interrupt.
   */
+ __attribute__((section("ccmram")))
 void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */

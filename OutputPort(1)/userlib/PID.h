@@ -14,7 +14,6 @@ typedef struct{
 	float Past_Error;
 	float Output;
 	float Ref;
-
 	float Output_Max;
 	float Output_Min;
 	//积分限幅
@@ -22,10 +21,26 @@ typedef struct{
 	//积分隔离
 	float Value_I_Iso;
 	
-}PID_t;
+}Pos_PID_t;
 
-void PID_Init(PID_t* plant,float Kp,float Ki,float Kd);
-float PI_Controller(PID_t* plant,float ValueCurrent);
-float PID_Controller(PID_t* plant,float ValueCurrent);
+typedef struct 
+{
+	/* data */
+	float Kp;
+	float Ki;
+	float Kd;
+	float Output;
+	float Ref;
+	float Output_Max;
+	float Output_Min;
+	float error_current;
+	float error_past1;
+	float error_past2;
+}Step_PID_t;
+
+void Pos_PID_Init(Pos_PID_t* plant,float Kp,float Ki,float Kd);
+void Step_PID_Init(Step_PID_t* plant,float Kp,float Ki,float Kd);
+float Pos_PID_Controller(Pos_PID_t* plant ,float ValueCurrent);
+float Step_PID_Controller(Step_PID_t* plant,float ValueCurrent);
 
 #endif

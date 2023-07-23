@@ -24,25 +24,25 @@ void System_Init()
     HAL_ADC_Start_DMA(&hadc1,(uint32_t*)Data.System_Sample.Raw_ADC_Value,3);
 
     //PID data 初始化
-    PID_Init(&Data.System_Control.OutputPort_Charger_Power_Control,30.0f,0.0f,0.0f);
+    Pos_PID_Init(&Data.System_Control.OutputPort_Charger_Power_Control,30.0f,0.0f,0.0f);
     Data.System_Control.OutputPort_Charger_Power_Control.Output_Max  = 6000.0f;
     Data.System_Control.OutputPort_Charger_Power_Control.Output_Min  = -6000.0f;
     Data.System_Control.OutputPort_Charger_Power_Control.Value_I_Max = 50.0f;
     Data.System_Control.OutputPort_Charger_Power_Control.Ref         = 4.0f;
 
-    PID_Init(&Data.System_Control.OutputPort_Resistor_Voltage_Control,500.0f,350.0f,0.0f);
+    Pos_PID_Init(&Data.System_Control.OutputPort_Resistor_Voltage_Control,500.0f,350.0f,0.0f);
     Data.System_Control.OutputPort_Resistor_Voltage_Control.Output_Max  = 54000.0f;
     Data.System_Control.OutputPort_Resistor_Voltage_Control.Output_Min  = 12000.0f;
     Data.System_Control.OutputPort_Resistor_Voltage_Control.Value_I_Max = 150.0f;
     Data.System_Control.OutputPort_Resistor_Voltage_Control.Ref         = 12.0f;
 
-    PID_Init(&Data.System_Control.OutputPort_Charger_Voltage_Control,400.0f,0.0f,0.0f);
+    Pos_PID_Init(&Data.System_Control.OutputPort_Charger_Voltage_Control,400.0f,0.0f,0.0f);
     Data.System_Control.OutputPort_Charger_Voltage_Control.Output_Max  = 6000.0f;
     Data.System_Control.OutputPort_Charger_Voltage_Control.Output_Min  = -6000.0f;
     Data.System_Control.OutputPort_Charger_Voltage_Control.Value_I_Max = 500.0f;
     Data.System_Control.OutputPort_Charger_Voltage_Control.Ref     = 8.1f;
 
-    PID_Init(&Data.System_Control.OutputPort_Charger_OutPower_Control,30.0f,0.0f,0.0f);
+    Pos_PID_Init(&Data.System_Control.OutputPort_Charger_OutPower_Control,30.0f,0.0f,0.0f);
     Data.System_Control.OutputPort_Charger_OutPower_Control.Output_Max  = 6000.0f;
     Data.System_Control.OutputPort_Charger_OutPower_Control.Output_Min  = -6000.0f;
     Data.System_Control.OutputPort_Charger_OutPower_Control.Value_I_Max = 500.0f;
@@ -89,7 +89,7 @@ void ADC_Conversion_Program()
 
 void Output_ChargerPower_LoopRun()
 {
-    int PID_Value = (int)PID_Controller(&Data.System_Control.OutputPort_Charger_Power_Control
+    int PID_Value = (int)Pos_PID_Controller(&Data.System_Control.OutputPort_Charger_Power_Control
                                         ,Data.System_Sample.OutputPort_Charging_Power);
 
     
@@ -112,7 +112,7 @@ void Output_ChargerPower_LoopRun()
 
 void Output_ResistorVoltage_LoopRun()
 {
-    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = (int)PID_Controller(&Data.System_Control.OutputPort_Resistor_Voltage_Control
+    hhrtim1.Instance->sTimerxRegs[0].CMP2xR = (int)Pos_PID_Controller(&Data.System_Control.OutputPort_Resistor_Voltage_Control
                                                                   ,Data.System_Sample.OutputPort_Resistor_Voltage_Value);
 
                                                                   
@@ -130,7 +130,7 @@ void Output_ResistorVoltage_LoopRun()
 
 void Output_ChargerVoltage_LoopRun()
 {
-    hhrtim1.Instance->sTimerxRegs[0].CMP1xR += (int)PID_Controller(&Data.System_Control.OutputPort_Charger_Voltage_Control
+    hhrtim1.Instance->sTimerxRegs[0].CMP1xR += (int)Pos_PID_Controller(&Data.System_Control.OutputPort_Charger_Voltage_Control
                                                                 ,Data.System_Sample.OutputPort_Charger_Voltage_Value);
     
     //输出限幅
@@ -145,7 +145,7 @@ void Output_ChargerVoltage_LoopRun()
 
 void Output_ChargerOutPow_LoopRun()
 {
-    int PID_Value = (int)PID_Controller(&Data.System_Control.OutputPort_Charger_OutPower_Control
+    int PID_Value = (int)Pos_PID_Controller(&Data.System_Control.OutputPort_Charger_OutPower_Control
                                         ,Data.System_Sample.OutputPort_Outputing_Power);
 
     
